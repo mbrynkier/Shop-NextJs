@@ -46,7 +46,7 @@ const Header = () => {
 				<div className={styles['navbar-right']}>
 					<ul>
 						<li className={(styles['more-clickable-area'], styles['navbar-email'], styles.pointer)} onClick={() => toggleMenu()} role="presentation">
-							platzi@example.com
+							yourEmail@example.com
 						</li>
 						<li
 							className={styles['navbar-shopping-cart']}
