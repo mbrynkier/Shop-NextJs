@@ -124,3 +124,30 @@ role="presentation" se le agrega a los onClick si solamente sirve para un eventH
 ----------------------------------------------------------------------------------------------
 Cuando usamos img en vez de Image hay que usarlo de la siguiente manera.
 <img src={menu.src} alt="menu" className={styles.menu} />
+
+----------------------------------------------------------------------------------------------
+Vamos a volver nuestra aplicacion a Progressive Web Apps (PWA)
+https://www.npmjs.com/package/next-pwa
+npm i next-pwa
+
+Agregamos la configuracion en Next.config.js
+const withPWA = require('next-pwa');
+
+module.exports = withPWA({
+  pwa: {
+    dest: 'public',
+    register: true,
+    mode: 'production',
+    disable:false,
+  },
+  ........
+})
+
+Luego vamos a https://www.simicart.com/manifest-generator.html/
+Llenamos todos los datos, nos descarga un zip y nos da un json. Copiamos ese json en public/manifest.json
+y copiamos los iconos en public
+
+agregamos la configuracion dentro de _documents.js
+<link rel="manifest" href='/manifest.json'/>
+
+sacamos la carpeta public de src y lo dejamos en la base del proyecto
