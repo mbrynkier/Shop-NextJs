@@ -1,0 +1,126 @@
+Next.js es un marco de desarrollo de código abierto construido sobre Node.js que permite funcionalidades de aplicaciones web basadas en React, 
+como la representación del lado del servidor y la generación de sitios web estáticos.
+
+Características principales de Next.js:
+
+Facilidad para aprender
+Optimizado para SEO
+Posibilidad de combinar páginas estáticas junto a páginas dinámicas
+Compatibilidad con todos los recursos de React
+En este curso se utilizará la versión 12 de Next.js (última hasta la fecha) y React 18. Se llevará a cabo la optimización del anterior proyecto realizado con webpack.
+
+-----------------------------------------------------------------------------------------------------
+Para crear el projecto con next
+npx create-next-app <nombre-de-tu-app>
+-----------------------------------------------------------------------------------------------------
+Se creo un archivo jsconfig.json, ahi definimos el base url y usamos una especie de alias para pages
+Tambien creamos un .eslintignore y definimos que ignore node_modules
+Modificamos .eslintrc.json a .eslintrc.js y lo modificamos.
+Creamos el prettier.config.js
+Instalamos todo lo siguiente --npm install prettier eslint-plugin-prettier eslint-plugin-jsx-a11y eslint-config-prettier eslint-config-next
+-----------------------------------------------------------------------------------------------------
+Se modifico en next.config.js configuraciones.
+-----------------------------------------------------------------------------------------------------
+importamos el react practico y le cambiamos el nombre a pages a template.
+Cambiamos el nombre a src2 en teststore, y copiamos el src del react-practico al teststore --cp -r src /home/mbrynkier/Platzi/nextjs/teststore/
+Movemos todo el contenido de src2 a src.
+Borramos index.js que esta dentro de src.
+Nos fijamos el objeto que primero llama en este caso es el layout que llama al header. Modificamos el index.js agregando el header, y dentro de header nos fijamos 
+los alias que esta usando y lo agregamos dentro de jsconfig.json.
+Lo corrimos pero tira error 404
+-----------------------------------------------------------------------------------------------------
+Instalamos sass --npm install sass
+
+Se cambia como importar los estilos de sass. Ej.
+import '@styles/Header.scss'; (Antes)
+import styles from '@styles/header.module.scss' (Ahora)
+<nav className={styles.Nav}> //y esta es la forma que insertamos el estilo
+
+y cambiamos de nombre de los styles. ej: header.scss a header.module.scss
+
+modificamos el _vars, sacamos lo de root y le agregamos el signo $ adelante de todos
+y en cada style modificar ej: var(--hospital-green); ----> $--hospital-green
+
+----------------------------------------------------------------------------------------------------
+Ahora que el principal es index.js y no App.jsx, el context se esta rompiendo. Por eso vamos a usar el context en _app.js
+En este agregamos el AppContext y el useInitialState
+
+No esta agarrando bien los estilos entonces modificamos lo siguiente en header.
+Ej: className='navbar-shopping-cart' lo pasamos a className={styles['navbar-shopping-cart']}
+<img src={menu} alt="menu" className='menu' /> lo pasamos a <img src={menu} alt="menu" className={styles.menu} />
+----------------------------------------------------------------------------------------------------
+Es una capa de performance
+Las imagenes no se estan mostrando entonces lo que hacemos es ir al componente y ponemos lo siguiente. (Se hizo en header)
+import Image from 'next/image';
+
+y en todos los tags de img hay que poner Image
+---------------------------------------------------------------------------------------------------
+agregamos el header dentro de _app.js ya que lo va a usar todas las pantallas.
+agregamos el product list dentro de index.js y modificamos todas las imagenes, estilos y className
+Se modifico en useGetProducts un filter para que solamente nos devuelva imagenes que tenga https.
+---------------------------------------------------------------------------------------------------
+Vamos a trabajar con el checkout, creamos un archivo en pages/checkout.js
+Copiamos todo lo de template/checkout.js y modificamos las imagenes, estilos y className
+---------------------------------------------------------------------------------------------------
+Cambiamos el funcionamiento del boton de checkout en MyOrder
+import Link from 'next/link';
+Cambiamos lo siguiente:
+<button className={styles['primary-button']}>
+    Checkout
+</button>
+
+<Link className={styles['primary-button']} href="/checkout">
+    Checkout
+</Link>
+---------------------------------------------------------------------------------------------------
+Todo lo que se pone en pages lo convierte en una ruta, pero si le pones un _ adelante es de configuracion y lo ignora.
+Para la parte del SEO se agrego un archivo llamado _document.js en pages. Este se comparte para todas las paginas.
+---------------------------------------------------------------------------------------------------
+Si queremos modificar por ejemplo el titulo en una pagina especifica hacemos lo siguiente:
+import Head from 'next/head';
+
+y lo agregamos:
+<Head>
+    <title>Checkout</title>
+</Head>
+
+Para agregar google analytics nos tenemos que crear una cuenta, crear una nueva propiedad dentro de administrar.
+Y luego copiar y lo agregamos a _document.js lo siguiente: (esto mas adelante se arreglo y se paso todo a _app.js)
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DVCLEN41HE"></script>
+<script dangerouslySetInnerHTML={{
+    __html: ` window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());                      
+    gtag('config', 'G-DVCLEN41HE');`
+}}/>
+---------------------------------------------------------------------------------------------------
+Corremos lo siguiente a ver si nos deja hacer deploy
+npm run lint
+Nos tira que tenemos errores.
+Para esto modificamos el package.json y agregamos dentro de scripts, esto corrige algunos de los simples errores:
+"lint:fix": "eslint src/ --fix"
+Al correrlo nos tira unos warnings que tenemos que ir arreglando.
+Se paso de _document.js a _app.js de la siguiente manera:
+
+import Script from 'next/script';
+
+<Script async src="https://www.googletagmanager.com/gtag/js?id=G-DVCLEN41HE" />
+<Script id="google-analytics" strategy="afterInteractive">
+{` window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());                      
+    gtag('config', 'G-DVCLEN41HE');`}
+</Script>
+
+Corremos npm run lint y vemos que hay algunos errores de prettier/prettier
+Vamos a modificar las rules dentro de lo que es .eslintrc.js. Agregamos lo de prettier/prettier.
+rules: {
+        'semi': ['error', 'always'],
+        'prettier/prettier': 0
+    }
+
+role="presentation" se le agrega a los onClick si solamente sirve para un eventHandler, para que lo ignore.
+
+----------------------------------------------------------------------------------------------
+Cuando usamos img en vez de Image hay que usarlo de la siguiente manera.
+<img src={menu.src} alt="menu" className={styles.menu} />
